@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920">
+<title>Полка игр</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="splash"><div class="loader"><span class="padload" aria-hidden="true"><svg viewBox="0 0 24 24" class="tri"><path d="M12 4 L21 19 H3 Z"/></svg><svg viewBox="0 0 24 24" class="cir"><circle cx="12" cy="12" r="8"/></svg><svg viewBox="0 0 24 24" class="crs"><path d="M5 5 L19 19 M19 5 L5 19"/></svg><svg viewBox="0 0 24 24" class="sqr"><rect x="4.5" y="4.5" width="15" height="15"/></svg></span><b class="dots">Загружаю полку</b><div id="msg"></div></div></div>
+<form id="login" hidden>
+  <div class="lg-title">🎮 Вход на полку</div>
+  <input id="pw" type="password" placeholder="Пароль" autocomplete="current-password">
+  <button type="submit">Войти</button>
+  <div id="lg-err"></div>
+</form>
+<iframe id="shelf" allow="autoplay; fullscreen; clipboard-write; encrypted-media"></iframe>
+<script src="main.js"></script>
+</body>
+</html>
