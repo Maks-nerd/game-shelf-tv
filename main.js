@@ -4,6 +4,7 @@
 var SHELF = 'https://claude-vm.tail65a20f.ts.net:8443/?app=tv';
 var frame = document.getElementById('shelf'), msg = document.getElementById('msg');
 var login = document.getElementById('login'), pw = document.getElementById('pw');
+var splash = document.getElementById('splash');
 
 // каналы ∧/∨ приложение забирает себе (листать ряды) — только пока оно на экране: ушли в браузер — отпускаем,
 // иначе браузер их не получает и прокрутка страниц там ломается
@@ -46,6 +47,8 @@ pw.addEventListener('keydown', function (e) {
 window.addEventListener('message', function (e) {
   var d = e.data || {};
   if (e.source !== frame.contentWindow) return;
+  // полка загрузилась (или просит пароль) — заставку «Загружаю полку» убираем совсем: её анимация под полкой съедала плавность
+  if (d.kino === 'ready' || d.kino === 'login') { clearTimeout(waitReady); tries = 0; msg.textContent = ''; splash.style.display = 'none'; }
   if (d.kino === 'login') return askPassword(d.error);
   if (d.kino !== 'open' || !d.url) return;
   try {  // полка просит открыть ссылку — запускаем браузер Samsung
@@ -54,7 +57,18 @@ window.addEventListener('message', function (e) {
   } catch (err) { /* не телевизор */ }
 });
 
-function go() { frame.src = SHELF; }
+// нет ответа от полки за 15 с — сервер, видимо, перезапускался: пробуем ещё раз
+var waitReady = null, tries = 0;
+function go() {
+  frame.src = SHELF + (tries ? '&r=' + Date.now() : '');
+  clearTimeout(waitReady);
+  waitReady = setTimeout(function () {
+    tries++;
+    msg.textContent = 'Сервер не отвечает — пробую ещё раз (' + tries + ')';
+    splash.style.display = '';
+    go();
+  }, 15000);
+}
 if (navigator.onLine === false) {
   msg.textContent = 'Нет интернета — открою, как только появится';
   window.addEventListener('online', go);
